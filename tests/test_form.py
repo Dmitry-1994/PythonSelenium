@@ -1,4 +1,8 @@
+from asyncio import wait
+from selenium.webdriver.support import expected_conditions as EC
+
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 def test_successful_login(valid_login):
@@ -68,6 +72,9 @@ def test_unsuccessful_login(login_page, invalid_login):
 
     button_login = driver.find_element(By.CSS_SELECTOR, "button.radius")
     button_login.click()
-
-    flash = driver.find_element(By.ID, "flash-messages")
+    wait = WebDriverWait(driver, 10)
+    flash = wait.until(
+        EC.visibility_of_element_located((By.ID, "flash-messages"))
+    )
+    # flash = driver.find_element(By.ID, "flash-messages")
     assert expected_message in flash.text
