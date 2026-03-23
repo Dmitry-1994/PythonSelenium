@@ -1,9 +1,7 @@
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
 
-base_url = "https://the-internet.herokuapp.com/login"
 valid_data = {
     "username": "tomsmith",
     "password": "SuperSecretPassword!",
@@ -30,29 +28,15 @@ def driver():
     yield driver
     driver.quit()
 
-@pytest.fixture
-def valid_login(driver):
-    driver.get(base_url)
-    username_input = driver.find_element(By.ID, "username")
-    username_input.clear()
-    username_input.send_keys(valid_data["username"])
-
-    password_input = driver.find_element(By.ID, "password")
-    password_input.clear()
-    password_input.send_keys(valid_data["password"])
-
-    button_login = driver.find_element(By.CSS_SELECTOR, "button.radius")
-    button_login.click()
-    yield driver
 
 @pytest.fixture
-def login_page(driver):
-    driver.get(base_url)
-    yield driver
+def get_valid_data():
+    return valid_data
+
 
 @pytest.fixture(params=[
     (invalid_data["username"], valid_data["password"], massage_error["username"]),
     (valid_data["username"], invalid_data["password"], massage_error["password"]),
 ])
-def invalid_login(driver, request):
+def invalid_login(request):
     return request.param

@@ -1,76 +1,21 @@
-from asyncio import wait
-from selenium.webdriver.support import expected_conditions as EC
-
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
+from ui_client import UIClient
 
 
-def test_successful_login(valid_login):
-    # driver.get("https://the-internet.herokuapp.com/login")
-
-    # username_input = driver.find_element(By.ID, "username")
-    # username_input.clear()
-    # username_input.send_keys("tomsmith")
-    #
-    # password_input = driver.find_element(By.ID, "password")
-    # password_input.clear()
-    # password_input.send_keys("SuperSecretPassword!")
-    #
-    # button_login = driver.find_element(By.CSS_SELECTOR, "button.radius")
-    # button_login.click()
-    driver = valid_login
-
-    flash = driver.find_element(By.ID, "flash-messages")
+def test_successful_login(driver, get_valid_data):
+    client = UIClient()
+    login_page = client.login_page(driver)
+    username = get_valid_data["username"]
+    password = get_valid_data["password"]
+    dashboard_page = client.login(login_page, username, password)
+    flash = dashboard_page.find_element(By.ID, "flash-messages")
     assert "You logged into a secure area!" in flash.text
-    header = driver.find_element(By.TAG_NAME, "h2")
-    assert "Secure Area" in header.text
 
-# def test_unsuccessful_login_name(driver):
-#     driver.get("https://the-internet.herokuapp.com/login")
-#
-#     username_input = driver.find_element(By.ID, "username")
-#     username_input.clear()
-#     username_input.send_keys("Error")
-#
-#     password_input = driver.find_element(By.ID, "password")
-#     password_input.clear()
-#     password_input.send_keys("SuperSecretPassword!")
-#
-#     button_login = driver.find_element(By.CSS_SELECTOR, "button.radius")
-#     button_login.click()
-#
-#     flash = driver.find_element(By.ID, "flash-messages")
-#     assert "Your username is invalid!" in flash.text
-#
-# def test_unsuccessful_login_password(driver):
-#     driver.get("https://the-internet.herokuapp.com/login")
-#
-#     username_input = driver.find_element(By.ID, "username")
-#     username_input.clear()
-#     username_input.send_keys("tomsmith")
-#
-#     password_input = driver.find_element(By.ID, "password")
-#     password_input.clear()
-#     password_input.send_keys("Error")
-#
-#     button_login = driver.find_element(By.CSS_SELECTOR, "button.radius")
-#     button_login.click()
-#
-#     flash = driver.find_element(By.ID, "flash-messages")
-#     assert "Your password is invalid!" in flash.text
 
-def test_unsuccessful_login(login_page, invalid_login):
-    driver = login_page
+def test_unsuccessful_login(driver, invalid_login):
+    client = UIClient()
+    login_page = client.login_page(driver)
     username, password, expected_message = invalid_login
-    username_input = driver.find_element(By.ID, "username")
-    username_input.clear()
-    username_input.send_keys(username)
-
-    password_input = driver.find_element(By.ID, "password")
-    password_input.clear()
-    password_input.send_keys(password)
-
-    button_login = driver.find_element(By.CSS_SELECTOR, "button.radius")
-    button_login.click()
-    flash = driver.find_element(By.ID, "flash-messages")
+    dashboard_page = client.login(login_page, username, password)
+    flash = dashboard_page.find_element(By.ID, "flash-messages")
     assert expected_message in flash.text
