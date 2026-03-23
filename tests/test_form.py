@@ -72,9 +72,5 @@ def test_unsuccessful_login(login_page, invalid_login):
 
     button_login = driver.find_element(By.CSS_SELECTOR, "button.radius")
     button_login.click()
-    wait = WebDriverWait(driver, 10)
-    flash = wait.until(
-        EC.visibility_of_element_located((By.ID, "flash"))
-    )
-    # flash = driver.find_element(By.ID, "flash-messages")
+    flash = driver.find_element(By.ID, "flash-messages")
     assert expected_message in flash.text
